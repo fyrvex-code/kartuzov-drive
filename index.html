@@ -1099,6 +1099,86 @@ body.no-scroll {
         flex: 1 1 100%;
     }
 }
+
+.lang-dropdown {
+    position: relative;
+    margin-right: 12px;
+}
+
+.lang-current {
+    height: 44px;
+    padding: 0 16px;
+
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+
+    background: rgba(255,255,255,0.06);
+    color: white;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    cursor: pointer;
+    transition: 0.25s;
+
+    backdrop-filter: blur(10px);
+}
+
+.lang-current:hover {
+    background: rgba(96,165,250,0.15);
+}
+
+/* выпадающее меню */
+.lang-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+
+    width: 160px;
+
+    padding: 8px;
+    border-radius: 16px;
+
+    background: rgba(8, 15, 40, 0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+
+    transition: 0.25s;
+    z-index: 1000;
+}
+
+.lang-dropdown.active .lang-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* элементы */
+.lang-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    transition: 0.2s;
+}
+
+.lang-item:hover {
+    background: rgba(96,165,250,0.15);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .lang-dropdown {
+        order: -1;
+        margin-right: auto;
+    }
+}
     
 </style>
 </head>
@@ -1119,6 +1199,21 @@ body.no-scroll {
     
 <header class="header">
     <div class="logo"><span>Kartuzov</span> Drive</div>
+    
+<div class="header-inner">
+
+    <!-- 🔥 КНОПКА ЯЗЫКА -->
+    <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-current" id="langCurrent">
+            RU ▾
+        </button>
+
+        <div class="lang-menu" id="langMenu">
+            <div class="lang-item" data-lang="ru">Русский</div>
+            <div class="lang-item" data-lang="en">English</div>
+            <div class="lang-item" data-lang="sr">Srpski</div>
+        </div>
+    </div>
 
     <nav class="desktop-nav">
         <a href="#top">Главная</a>
@@ -1824,6 +1919,39 @@ window.addEventListener('resize', checkOrientationOverlay);
 window.addEventListener('orientationchange', checkOrientationOverlay);
 
 checkOrientationOverlay();
+
+const langDropdown = document.getElementById('langDropdown');
+const langCurrent = document.getElementById('langCurrent');
+const langMenu = document.getElementById('langMenu');
+const langItems = document.querySelectorAll('.lang-item');
+
+/* открыть / закрыть */
+langCurrent.addEventListener('click', () => {
+    langDropdown.classList.toggle('active');
+});
+
+/* выбор языка */
+langItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const lang = item.dataset.lang;
+
+        setLanguage(lang); // 🔥 используем твою функцию перевода
+
+        langCurrent.textContent = lang.toUpperCase() + ' ▾';
+        langDropdown.classList.remove('active');
+    });
+});
+
+/* закрытие при клике вне */
+document.addEventListener('click', (e) => {
+    if (!langDropdown.contains(e.target)) {
+        langDropdown.classList.remove('active');
+    }
+});
+
+/* при загрузке */
+const savedLang = localStorage.getItem("siteLanguage") || "ru";
+langCurrent.textContent = savedLang.toUpperCase() + ' ▾';
     
 </script>
 
