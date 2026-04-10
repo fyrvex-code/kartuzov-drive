@@ -1179,10 +1179,103 @@ body.no-scroll {
         margin-right: auto;
     }
 }
+
+.header {
+    gap: 12px;
+}
+
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.lang-dropdown {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.mobile-lang-dropdown {
+    margin-top: 10px;
+}
+
+.lang-current {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.lang-current:hover {
+    background: rgba(96,165,250,0.15);
+}
+
+.lang-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 160px;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(8, 15, 40, 0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: 0.25s;
+    z-index: 1000;
+}
+
+.lang-dropdown.active .lang-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    background: transparent;
+    border: none;
+    transition: 0.2s;
+}
+
+.lang-item:hover {
+    background: rgba(96,165,250,0.15);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .lang-dropdown {
+        display: none;
+    }
+
+    .mobile-lang-dropdown {
+        display: block;
+        position: relative;
+    }
+}
     
 </style>
 </head>
-<body>
 
 <body id="top">
     
@@ -1199,29 +1292,26 @@ body.no-scroll {
     
 <header class="header">
     <div class="logo"><span>Kartuzov</span> Drive</div>
-    
-<div class="header-inner">
 
-    <!-- 🔥 КНОПКА ЯЗЫКА -->
     <div class="lang-dropdown" id="langDropdown">
-        <button class="lang-current" id="langCurrent">
+        <button class="lang-current" id="langCurrent" type="button">
             RU ▾
         </button>
 
         <div class="lang-menu" id="langMenu">
-            <div class="lang-item" data-lang="ru">Русский</div>
-            <div class="lang-item" data-lang="en">English</div>
-            <div class="lang-item" data-lang="sr">Srpski</div>
+            <button class="lang-item" type="button" data-lang="ru">Русский</button>
+            <button class="lang-item" type="button" data-lang="en">English</button>
+            <button class="lang-item" type="button" data-lang="sr">Srpski</button>
         </div>
     </div>
 
     <nav class="desktop-nav">
-        <a href="#top">Главная</a>
-        <a href="#about">Обо мне</a>
-        <a href="#services">Услуги</a>
-        <a href="#process">Как проходят занятия</a>
-        <a href="#reviews">Отзывы</a>
-        <a href="#contacts">Контакты</a>
+        <a href="#top" data-i18n="nav_home">Главная</a>
+        <a href="#about" data-i18n="nav_about">Обо мне</a>
+        <a href="#services" data-i18n="nav_services">Услуги</a>
+        <a href="#process" data-i18n="nav_process">Как проходят занятия</a>
+        <a href="#reviews" data-i18n="nav_reviews">Отзывы</a>
+        <a href="#contacts" data-i18n="nav_contacts">Контакты</a>
     </nav>
 
     <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню">
@@ -1232,36 +1322,51 @@ body.no-scroll {
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <div class="mobile-menu" id="mobileMenu">
-    <a href="#top">Главная</a>
-    <a href="#about">Обо мне</a>
-    <a href="#services">Услуги</a>
-    <a href="#process">Как проходят занятия</a>
-    <a href="#reviews">Отзывы</a>
-    <a href="#contacts">Контакты</a>
+    <a href="#top" data-i18n="nav_home">Главная</a>
+    <a href="#about" data-i18n="nav_about">Обо мне</a>
+    <a href="#services" data-i18n="nav_services">Услуги</a>
+    <a href="#process" data-i18n="nav_process">Как проходят занятия</a>
+    <a href="#reviews" data-i18n="nav_reviews">Отзывы</a>
+    <a href="#contacts" data-i18n="nav_contacts">Контакты</a>
+
+    <div class="lang-dropdown mobile-lang-dropdown" id="mobileLangDropdown">
+        <button class="lang-current" id="mobileLangCurrent" type="button">
+            RU ▾
+        </button>
+
+        <div class="lang-menu" id="mobileLangMenu">
+            <button class="lang-item" type="button" data-lang="ru">Русский</button>
+            <button class="lang-item" type="button" data-lang="en">English</button>
+            <button class="lang-item" type="button" data-lang="sr">Srpski</button>
+        </div>
+    </div>
 </div>
 
 <section class="hero">
     <div class="hero-inner">
         <div class="hero-text fade">
-            <h1>Научись водить уверенно и спокойно</h1>
-            <p>
+            <h1 data-i18n="hero_title">Научись водить уверенно и спокойно</h1>
+            <p data-i18n="hero_text">
                 Картузов Сергей — инструктор по вождению, который помогает не просто подготовиться к экзамену,
                 а действительно чувствовать себя уверенно за рулём в городе, в потоке и на парковке.
             </p>
 
+
+
+
                         <div class="mechanic-badge">
     <div class="mechanic-icon">⚙️</div>
     <div class="mechanic-text">
-        <span>Обучение только на механике</span>
-        <p>Лучшее понимание машины и полный контроль на дороге</p>
+        <span data-i18n="mechanic_title">Обучение только на механике</span>
+        <p data-i18n="mechanic_text">Лучшее понимание машины и полный контроль на дороге</p>
     </div>
 </div>
 
 
             
             <div class="hero-buttons">
-                <a href="#contacts" class="btn btn-primary">Записаться</a>
-                <a href="#reviews" class="btn btn-secondary">Смотреть отзывы</a>
+                <a href="#contacts" class="btn btn-primary" data-i18n="btn_signup">Записаться</a>
+                <a href="#reviews" class="btn btn-secondary" data-i18n="btn_reviews">Смотреть отзывы</a>
             </div>
         </div>
 
@@ -1920,38 +2025,117 @@ window.addEventListener('orientationchange', checkOrientationOverlay);
 
 checkOrientationOverlay();
 
-const langDropdown = document.getElementById('langDropdown');
-const langCurrent = document.getElementById('langCurrent');
-const langMenu = document.getElementById('langMenu');
-const langItems = document.querySelectorAll('.lang-item');
+const desktopLangDropdown = document.getElementById("langDropdown");
+const mobileLangDropdown = document.getElementById("mobileLangDropdown");
+const desktopLangCurrent = document.getElementById("langCurrent");
+const mobileLangCurrent = document.getElementById("mobileLangCurrent");
 
-/* открыть / закрыть */
-langCurrent.addEventListener('click', () => {
-    langDropdown.classList.toggle('active');
-});
+function toggleDropdown(dropdown) {
+    if (dropdown) {
+        dropdown.classList.toggle("active");
+    }
+}
 
-/* выбор языка */
-langItems.forEach(item => {
-    item.addEventListener('click', () => {
+if (desktopLangCurrent) {
+    desktopLangCurrent.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(desktopLangDropdown);
+    });
+}
+
+if (mobileLangCurrent) {
+    mobileLangCurrent.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(mobileLangDropdown);
+    });
+}
+
+document.querySelectorAll(".lang-item").forEach((item) => {
+    item.addEventListener("click", () => {
         const lang = item.dataset.lang;
+        setLanguage(lang);
 
-        setLanguage(lang); // 🔥 используем твою функцию перевода
-
-        langCurrent.textContent = lang.toUpperCase() + ' ▾';
-        langDropdown.classList.remove('active');
+        if (desktopLangDropdown) desktopLangDropdown.classList.remove("active");
+        if (mobileLangDropdown) mobileLangDropdown.classList.remove("active");
     });
 });
 
-/* закрытие при клике вне */
-document.addEventListener('click', (e) => {
-    if (!langDropdown.contains(e.target)) {
-        langDropdown.classList.remove('active');
+document.addEventListener("click", (e) => {
+    if (desktopLangDropdown && !desktopLangDropdown.contains(e.target)) {
+        desktopLangDropdown.classList.remove("active");
+    }
+
+    if (mobileLangDropdown && !mobileLangDropdown.contains(e.target)) {
+        mobileLangDropdown.classList.remove("active");
     }
 });
 
-/* при загрузке */
-const savedLang = localStorage.getItem("siteLanguage") || "ru";
-langCurrent.textContent = savedLang.toUpperCase() + ' ▾';
+const savedLanguage = localStorage.getItem("siteLanguage") || "ru";
+setLanguage(savedLanguage);
+
+const translations = {
+    ru: {
+        nav_home: "Главная",
+        nav_about: "Обо мне",
+        nav_services: "Услуги",
+        nav_process: "Как проходят занятия",
+        nav_reviews: "Отзывы",
+        nav_contacts: "Контакты",
+        hero_title: "Научись водить уверенно и спокойно",
+        hero_text: "Картузов Сергей — инструктор по вождению, который помогает не просто подготовиться к экзамену, а действительно чувствовать себя уверенно за рулём в городе, в потоке и на парковке.",
+        mechanic_title: "Обучение только на механике",
+        mechanic_text: "Лучшее понимание машины и полный контроль на дороге",
+        btn_signup: "Записаться",
+        btn_reviews: "Смотреть отзывы"
+    },
+    en: {
+        nav_home: "Home",
+        nav_about: "About",
+        nav_services: "Services",
+        nav_process: "How lessons work",
+        nav_reviews: "Reviews",
+        nav_contacts: "Contacts",
+        hero_title: "Learn to drive confidently and calmly",
+        hero_text: "Sergey Kartuzov is a driving instructor who helps you not only prepare for the exam, but also feel confident behind the wheel in the city, in traffic, and while parking.",
+        mechanic_title: "Training only on manual transmission",
+        mechanic_text: "Better understanding of the car and full control on the road",
+        btn_signup: "Book now",
+        btn_reviews: "View reviews"
+    },
+    sr: {
+        nav_home: "Početna",
+        nav_about: "O meni",
+        nav_services: "Usluge",
+        nav_process: "Kako izgledaju časovi",
+        nav_reviews: "Recenzije",
+        nav_contacts: "Kontakt",
+        hero_title: "Nauči da voziš sigurno i smireno",
+        hero_text: "Sergej Kartuzov je instruktor vožnje koji pomaže ne samo da se pripremiš za ispit, već i da se osećaš sigurno za volanom u gradu, u saobraćaju i pri parkiranju.",
+        mechanic_title: "Obuka samo na manuelnom menjaču",
+        mechanic_text: "Bolje razumevanje automobila i potpuna kontrola na putu",
+        btn_signup: "Prijavi se",
+        btn_reviews: "Pogledaj recenzije"
+    }
+};
+
+function setLanguage(lang) {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.dataset.i18n;
+        if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+
+    const currentLabel = lang.toUpperCase() + " ▾";
+
+    const langCurrent = document.getElementById("langCurrent");
+    const mobileLangCurrent = document.getElementById("mobileLangCurrent");
+
+    if (langCurrent) langCurrent.textContent = currentLabel;
+    if (mobileLangCurrent) mobileLangCurrent.textContent = currentLabel;
+
+    localStorage.setItem("siteLanguage", lang);
+}
     
 </script>
 
