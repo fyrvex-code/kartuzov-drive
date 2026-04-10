@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Картузов Сергей — Инструктор по вождению</title>
+<meta name="description" content="Картузов Сергей — инструктор по вождению. Обучение с нуля, город, парковка, подготовка к экзамену, индивидуальные занятия.">
+<meta name="keywords" content="Картузов Сергей, инструктор по вождению, обучение вождению, автоинструктор">
+<link rel="icon" href="favicon.png" type="image/png">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    font-family:Arial,sans-serif;
+    background:#05070f;
+    color:#fff;
+    overflow-x:hidden;
+}
+body.no-scroll{
+    overflow:hidden;
+    touch-action:none;
+}
+.bg{
+    position:fixed; inset:0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(37,99,235,.45), transparent 30%),
+        radial-gradient(circle at 80% 60%, rgba(29,78,216,.30), transparent 35%),
+        linear-gradient(180deg, #07102a 0%, #030712 100%);
+    z-index:-3;
+}
+canvas#particles{
+    position:fixed; inset:0;
+    z-index:-2;
+    pointer-events:none;
+}
+
+/* Header */
+.header{
+    position:fixed; top:0; left:0; width:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    padding:16px 18px;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    z-index:1000;
+}
+.logo{
+    font-size:20px; font-weight:700; white-space:nowrap; flex:0 0 auto;
+}
+.logo span{color:#60a5fa}
+
+.desktop-nav{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    margin-left:auto;
+}
+.desktop-nav a{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:10px 16px; min-height:42px;
+    color:rgba(255,255,255,.9); text-decoration:none;
+    font-size:14px; font-weight:600;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    transition:.25s ease;
+}
+.desktop-nav a:hover{
+    color:#fff;
+    background:rgba(96,165,250,.14);
+    border-color:rgba(96,165,250,.35);
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(37,99,235,.22);
+}
+.desktop-nav a:active{transform:translateY(0)}
+
+.menu-toggle{
+    display:none; align-items:center; justify-content:center;
+    width:44px; height:44px;
+    border-radius:14px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    color:#fff; font-size:24px; cursor:pointer;
+    transition:.25s ease;
+    z-index:1002;
+}
+.menu-toggle:hover{
+    background:rgba(96,165,250,.14);
+    border-color:rgba(96,165,250,.35);
+}
+
+/* language dropdown */
+.lang-dropdown{position:relative; flex:0 0 auto}
+.lang-current{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:84px; height:44px; padding:0 16px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.06);
+    color:#fff; font-weight:600; font-size:14px;
+    cursor:pointer; transition:.25s;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+}
+.lang-current:hover{background:rgba(96,165,250,.15)}
+.lang-menu{
+    position:absolute; top:110%; left:0;
+    width:170px;
+    padding:8px;
+    border-radius:16px;
+    background:rgba(8,15,40,.95);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:.25s; z-index:1000;
+}
+.lang-dropdown.active .lang-menu{
+    opacity:1; visibility:visible; transform:translateY(0);
+}
+.lang-item{
+    width:100%;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+    color:rgba(255,255,255,.8);
+    background:transparent;
+    border:none;
+    transition:.2s;
+}
+.lang-item:hover{
+    background:rgba(96,165,250,.15);
+    color:#fff;
+}
+
+/* mobile menu */
+.menu-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    opacity:0; visibility:hidden;
+    transition:opacity .3s ease, visibility .3s ease;
+    z-index:998;
+}
+.menu-overlay.active{opacity:1; visibility:visible}
+
+.mobile-menu{
+    position:fixed; top:78px; left:16px; right:16px;
+    max-height:calc(100vh - 100px);
+    overflow-y:auto;
+    display:flex; flex-direction:column; gap:10px;
+    padding:14px;
+    background:rgba(8,12,24,.96);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 20px 40px rgba(0,0,0,.35);
+    z-index:999;
+    opacity:0; visibility:hidden;
+    transform:translateY(-14px) scale(.98);
+    transition:opacity .28s ease, transform .28s ease, visibility .28s ease;
+}
+.mobile-menu a{
+    display:block;
+    padding:14px 16px;
+    border-radius:12px;
+    color:#fff; text-decoration:none;
+    font-size:15px; font-weight:600; text-align:center;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.05);
+    transition:.25s ease;
+}
+.mobile-menu a:hover{
+    background:rgba(96,165,250,.14);
+    border-color:rgba(96,165,250,.35);
+}
+.mobile-menu.active{
+    opacity:1; visibility:visible; transform:translateY(0) scale(1);
+}
+.mobile-lang-dropdown{display:none; margin-top:10px; position:relative}
+
+/* Sections */
+.section{
+    width:100%; max-width:1200px;
+    margin:0 auto;
+    padding:110px 20px;
+    scroll-margin-top:110px;
+}
+.section-title{
+    font-size:38px;
+    text-align:center;
+    margin-bottom:18px;
+}
+.section-subtitle{
+    text-align:center;
+    max-width:780px;
+    margin:0 auto 50px;
+    color:rgba(255,255,255,.75);
+    line-height:1.6;
+    font-size:17px;
+}
+
+/* Hero */
+.hero{
+    min-height:100vh;
+    display:flex; align-items:center;
+    padding-top:90px;
+}
+.hero-inner{
+    width:100%; max-width:1200px;
+    margin:0 auto;
+    padding:0 20px;
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:40px;
+    align-items:center;
+}
+.hero-text h1{
+    font-size:68px;
+    line-height:1.02;
+    margin-bottom:20px;
+    letter-spacing:-1px;
+    background:linear-gradient(90deg,#ffffff 0%, #7dd3fc 45%, #2563eb 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.hero-text p{
+    font-size:19px;
+    line-height:1.7;
+    color:rgba(255,255,255,.78);
+    max-width:680px;
+    margin-bottom:15px;
+}
+.hero-buttons{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+}
+.btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:180px;
+    padding:15px 24px;
+    border-radius:14px;
+    text-decoration:none;
+    border:none; cursor:pointer;
+    font-size:15px; font-weight:700;
+    transition:.25s ease;
+}
+.btn-primary{
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
+    color:#fff;
+    box-shadow:0 10px 30px rgba(37,99,235,.35);
+}
+.btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 34px rgba(37,99,235,.45);
+}
+.btn-secondary{
+    background:rgba(255,255,255,.06);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.08);
+}
+.btn-secondary:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.10);
+}
+.mechanic-badge{
+    margin-top:25px; margin-bottom:25px;
+    display:flex; align-items:center; gap:14px;
+    padding:16px 18px;
+    border-radius:18px;
+    background:linear-gradient(135deg, rgba(96,165,250,.15), rgba(255,255,255,.05));
+    border:1px solid rgba(96,165,250,.25);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(37,99,235,.15), inset 0 0 20px rgba(96,165,250,.08);
+    transition:.3s ease;
+}
+.mechanic-badge:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 20px 50px rgba(37,99,235,.25), inset 0 0 25px rgba(96,165,250,.15);
+}
+.mechanic-icon{
+    font-size:26px;
+    background:rgba(96,165,250,.2);
+    padding:10px;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+}
+.mechanic-text span{
+    display:block;
+    font-size:16px; font-weight:700;
+    color:#fff;
+}
+.mechanic-text p{
+    margin-top:4px;
+    font-size:13px;
+    color:rgba(255,255,255,.65);
+}
+.hero-card{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:28px;
+    padding:28px;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.hero-card h3{
+    font-size:26px;
+    margin-bottom:16px;
+}
+.hero-card ul{
+    list-style:none;
+    display:grid;
+    gap:14px;
+    color:rgba(255,255,255,.82);
+    line-height:1.5;
+}
+.hero-card li{
+    padding:14px 16px;
+    background:rgba(255,255,255,.04);
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.04);
+}
+
+
+.hero-side{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+.instructor-photo-card{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:28px;
+    padding:22px;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.photo-stage{
+    position:relative;
+    min-height:420px;
+    border-radius:22px;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 20%, rgba(96,165,250,.20), transparent 35%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+}
+.instructor-photo{
+    position:relative;
+    z-index:2;
+    max-width:100%;
+    max-height:390px;
+    object-fit:contain;
+    display:block;
+}
+.photo-placeholder{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:24px;
+    color:rgba(255,255,255,.58);
+    font-size:18px;
+    font-weight:600;
+    z-index:1;
+}
+.instructor-photo[src=""], .instructor-photo:not([src]) {
+    display:none;
+}
+.instructor-photo-card:has(.instructor-photo[src="instructor-photo.png"]) .photo-placeholder{
+    display:flex;
+}
+.instructor-info{
+    text-align:center;
+    padding-top:16px;
+}
+.instructor-info h3{
+    font-size:28px;
+    margin-bottom:8px;
+}
+.instructor-info p{
+    color:rgba(255,255,255,.72);
+    font-size:16px;
+}
+
+/* cards and stats */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:22px;
+}
+.card{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:22px;
+    padding:24px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    transition:.25s ease;
+}
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 35px rgba(37,99,235,.18);
+}
+.card h3{
+    font-size:22px;
+    margin-bottom:12px;
+}
+.card p{
+    color:rgba(255,255,255,.75);
+    line-height:1.6;
+    font-size:15px;
+}
+.stats{
+    margin-top:26px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+.stat{
+    background:rgba(255,255,255,.04);
+    border-radius:18px;
+    padding:22px;
+    border:1px solid rgba(255,255,255,.05);
+    text-align:center;
+}
+.stat strong{
+    display:block;
+    font-size:32px;
+    color:#93c5fd;
+    margin-bottom:8px;
+}
+.stat span{
+    color:rgba(255,255,255,.75);
+    font-size:14px;
+}
+
+/* reviews */
+#reviews{overflow:visible; scroll-margin-top:120px}
+#contacts{scroll-margin-top:120px}
+.reviews-wrapper{
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    overflow-x:hidden;
+    overflow-y:visible;
+    padding-top:12px;
+    padding-bottom:12px;
+}
+.reviews-track{
+    display:flex;
+    gap:20px;
+    width:max-content;
+    animation:reviewsScroll 80s linear infinite;
+    will-change:transform;
+}
+.review{
+    flex:0 0 300px;
+    min-height:190px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:20px;
+    padding:22px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    transition:transform .25s ease, background .25s ease, border-color .25s ease;
+}
+.review:hover{
+    transform:translateY(-3px);
+    background:rgba(255,255,255,.09);
+    border-color:rgba(96,165,250,.35);
+}
+.review h3{
+    font-size:22px;
+    margin-bottom:10px;
+}
+.stars{
+    color:#facc15;
+    letter-spacing:2px;
+    margin-bottom:14px;
+    font-size:18px;
+}
+.review p{
+    color:rgba(255,255,255,.8);
+    line-height:1.6;
+    font-size:15px;
+}
+@keyframes reviewsScroll{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-33.3333%)}
+}
+
+/* contact */
+.contact-box{
+    max-width:760px;
+    margin:0 auto;
+    text-align:center;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:28px;
+    padding:34px 24px;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+}
+.contact-box h2{
+    font-size:38px;
+    margin-bottom:14px;
+}
+.contact-box p{
+    color:rgba(255,255,255,.8);
+    font-size:18px;
+    margin-bottom:22px;
+}
+.phone{
+    font-size:28px;
+    font-weight:700;
+    color:#93c5fd;
+    margin-bottom:26px;
+}
+
+/* fade */
+.fade{
+    opacity:1;
+    transform:translateY(0);
+    transition:opacity .9s ease, transform .9s ease;
+}
+.js-animate .fade{
+    opacity:0;
+    transform:translateY(35px);
+}
+.js-animate .fade.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* footer */
+.footer{
+    padding:40px 20px 60px;
+    text-align:center;
+    color:rgba(255,255,255,.52);
+    font-size:14px;
+}
+.privacy-link{
+    color:#60a5fa;
+    cursor:pointer;
+    transition:.25s;
+}
+.privacy-link:hover{text-decoration:underline}
+
+/* contact modal */
+.contact-modal-overlay{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(3,8,20,.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    opacity:0; visibility:hidden;
+    transition:opacity .28s ease, visibility .28s ease;
+    z-index:2000;
+}
+.contact-modal-overlay.active{opacity:1; visibility:visible}
+.contact-modal{
+    position:relative;
+    width:100%; max-width:420px;
+    background:rgba(10,18,40,.92);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:60px 22px 22px;
+    box-shadow:0 30px 80px rgba(0,0,0,.4);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    transform:scale(.96) translateY(12px);
+    transition:transform .28s ease;
+}
+.contact-modal-overlay.active .contact-modal{transform:scale(1) translateY(0)}
+.contact-modal h3{
+    margin:0 0 10px;
+    font-size:30px;
+    text-align:center;
+    color:#fff;
+}
+.contact-modal p{
+    margin:0 0 22px;
+    text-align:center;
+    color:rgba(255,255,255,.72);
+    font-size:15px;
+    line-height:1.5;
+}
+.contact-modal-close{
+    position:absolute;
+    top:16px; right:16px;
+    width:36px; height:36px;
+    border-radius:10px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    color:#fff; font-size:18px;
+    cursor:pointer;
+    z-index:2;
+    transition:.25s ease;
+}
+.contact-modal-close:hover{
+    background:rgba(96,165,250,.15);
+    border-color:rgba(96,165,250,.4);
+}
+.contact-modal-buttons{
+    display:grid;
+    gap:12px;
+}
+.contact-option{
+    display:flex; align-items:center; justify-content:center;
+    min-height:54px;
+    padding:14px 16px;
+    border-radius:16px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:700;
+    font-size:16px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.25s ease;
+}
+.contact-option:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.08);
+    border-color:rgba(96,165,250,.35);
+}
+.primary-option{
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
+    border-color:transparent;
+}
+.primary-option:hover{
+    background:linear-gradient(90deg,#2d6df1,#72b7ff);
+}
+
+/* privacy modal */
+.privacy-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.6);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; visibility:hidden;
+    transition:.3s;
+    z-index:2000;
+}
+.privacy-overlay.active{opacity:1; visibility:visible}
+.privacy-modal{
+    position:relative;
+    width:95%; max-width:900px; max-height:85vh;
+    padding:24px;
+    border-radius:28px;
+    background:rgba(8,15,40,.96);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 40px 100px rgba(0,0,0,.5);
+    transform:scale(.96) translateY(20px);
+    transition:.3s ease;
+    overflow:hidden;
+}
+.privacy-overlay.active .privacy-modal{transform:scale(1) translateY(0)}
+.privacy-close{
+    position:absolute;
+    top:45px; right:70px;
+    width:38px; height:38px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.05);
+    color:#fff;
+    cursor:pointer;
+    z-index:10;
+}
+.privacy-content{
+    max-height:calc(85vh - 48px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:12px;
+    padding-top:18px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(96,165,250,.65) rgba(255,255,255,.05);
+}
+.privacy-content::-webkit-scrollbar{width:10px}
+.privacy-content::-webkit-scrollbar-track{
+    background:rgba(255,255,255,.05);
+    border-radius:999px;
+    margin:10px 0;
+}
+.privacy-content::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, rgba(96,165,250,.95), rgba(37,99,235,.9));
+    border-radius:999px;
+    border:2px solid rgba(8,15,40,.96);
+}
+.privacy-content::-webkit-scrollbar-thumb:hover{
+    background:linear-gradient(180deg, rgba(147,197,253,1), rgba(59,130,246,.95));
+}
+.privacy-modal h3{
+    font-size:34px;
+    margin-bottom:20px;
+    text-align:center;
+}
+.privacy-modal p{
+    font-size:15px;
+    line-height:1.7;
+    margin-bottom:14px;
+    color:rgba(255,255,255,.75);
+}
+
+/* rotate overlay */
+.rotate-overlay{
+    position:fixed; inset:0;
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+    background:rgba(5,7,15,.78);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    z-index:5000;
+}
+.rotate-overlay.active{display:flex}
+.rotate-box{
+    width:100%; max-width:420px;
+    text-align:center;
+    padding:28px 24px;
+    border-radius:26px;
+    background:rgba(8,15,40,.88);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 30px 80px rgba(0,0,0,.4);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+}
+.rotate-icon{
+    font-size:52px;
+    margin-bottom:16px;
+    animation:rotatePhonePulse 1.8s ease-in-out infinite;
+}
+.rotate-box h2{
+    margin:0 0 10px;
+    font-size:30px;
+    color:#fff;
+}
+.rotate-box p{
+    margin:0;
+    font-size:15px;
+    line-height:1.6;
+    color:rgba(255,255,255,.72);
+}
+@keyframes rotatePhonePulse{
+    0%{transform:rotate(0deg) scale(1)}
+    25%{transform:rotate(90deg) scale(1.05)}
+    50%{transform:rotate(90deg) scale(1)}
+    75%{transform:rotate(0deg) scale(1.05)}
+    100%{transform:rotate(0deg) scale(1)}
+}
+
+/* responsive */
+@media (max-width:1100px){
+
+    .hero-side{gap:18px}
+    .photo-stage{min-height:360px}
+    .instructor-photo{max-height:330px}
+
+    .hero-inner{grid-template-columns:1fr}
+    .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:768px){
+
+    .hero-side{gap:16px}
+    .instructor-photo-card{padding:16px}
+    .photo-stage{
+        min-height:300px;
+        border-radius:18px;
+    }
+    .instructor-photo{
+        max-height:270px;
+    }
+    .photo-placeholder{
+        font-size:16px;
+        padding:18px;
+    }
+    .instructor-info h3{
+        font-size:24px;
+    }
+
+    .desktop-nav,.lang-dropdown{display:none}
+    .menu-toggle{display:inline-flex}
+    .mobile-lang-dropdown{display:block}
+    .hero{
+        min-height:auto;
+        padding-top:140px;
+        padding-bottom:70px;
+    }
+    .hero-text h1{font-size:42px}
+    .hero-text p{font-size:16px}
+    .hero-buttons{gap:10px}
+    .hero-buttons .btn{
+        min-width:0;
+        flex:1 1 calc(50% - 5px);
+        padding:13px 14px;
+        font-size:14px;
+    }
+    .section{padding:85px 16px}
+    .section-title,.contact-box h2{font-size:30px}
+    .cards{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr}
+    .review{
+        flex:0 0 260px;
+        min-height:210px;
+    }
+    .reviews-track{animation-duration:60s}
+    .phone{font-size:22px}
+    .privacy-close{
+        top:10px;
+        right:35px;
+        width:34px;
+        height:34px;
+        font-size:16px;
+    }
+    .privacy-modal h3{
+        font-size:24px;
+        line-height:1.2;
+    }
+}
+@media (max-width:420px){
+    .hero-buttons{flex-direction:column}
+    .hero-buttons .btn{
+        width:100%;
+        flex:1 1 100%;
+    }
+}
+
+/* FIX HEADER ORDER */
+.header {display:flex;align-items:center;gap:12px}
+.logo {order:1}
+.lang-dropdown {order:2}
+.desktop-nav {order:3}
+.menu-toggle {order:4;margin-left:auto}
+
+@media (max-width:768px){
+  .desktop-nav{display:none}
+  .lang-dropdown{display:block;order:2;margin-left:auto;margin-right:10px}
+  .menu-toggle{display:inline-flex;order:3;margin-left:0}
+}
+
+</style>
+</head>
+
+<body id="top">
+<div class="bg"></div>
+<canvas id="particles"></canvas>
+
+<div class="rotate-overlay" id="rotateOverlay">
+    <div class="rotate-box">
+        <div class="rotate-icon">↻</div>
+        <h2 data-i18n="rotate_title">Переверните телефон</h2>
+        <p data-i18n="rotate_text">Сайт лучше выглядит в вертикальном положении</p>
+    </div>
+</div>
+
+<header class="header">
+    <div class="logo"><span>Kartuzov</span> Drive</div>
+
+    <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-current" id="langCurrent" type="button">🇷🇺 RU ▾</button>
+        <div class="lang-menu" id="langMenu">
+            <button class="lang-item" type="button" data-lang="ru">🇷🇺 Русский</button>
+            <button class="lang-item" type="button" data-lang="en">🇬🇧 English</button>
+            <button class="lang-item" type="button" data-lang="sr">🇷🇸 Srpski</button>
+        </div>
+    </div>
+
+    <nav class="desktop-nav">
+        <a href="#top" data-i18n="nav_home">Главная</a>
+        <a href="#about" data-i18n="nav_about">Обо мне</a>
+        <a href="#services" data-i18n="nav_services">Услуги</a>
+        <a href="#process" data-i18n="nav_process">Как проходят занятия</a>
+        <a href="#reviews" data-i18n="nav_reviews">Отзывы</a>
+        <a href="#contacts" data-i18n="nav_contacts">Контакты</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню">☰</button>
+</header>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#top" data-i18n="nav_home">Главная</a>
+    <a href="#about" data-i18n="nav_about">Обо мне</a>
+    <a href="#services" data-i18n="nav_services">Услуги</a>
+    <a href="#process" data-i18n="nav_process">Как проходят занятия</a>
+    <a href="#reviews" data-i18n="nav_reviews">Отзывы</a>
+    <a href="#contacts" data-i18n="nav_contacts">Контакты</a>
+
+    <div class="lang-dropdown mobile-lang-dropdown" id="mobileLangDropdown">
+        <button class="lang-current" id="mobileLangCurrent" type="button">🇷🇺 RU ▾</button>
+        <div class="lang-menu" id="mobileLangMenu">
+            <button class="lang-item" type="button" data-lang="ru">🇷🇺 Русский</button>
+            <button class="lang-item" type="button" data-lang="en">🇬🇧 English</button>
+            <button class="lang-item" type="button" data-lang="sr">🇷🇸 Srpski</button>
+        </div>
+    </div>
+</div>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text fade">
+            <h1 data-i18n="hero_title">Научись водить уверенно и спокойно</h1>
+            <p data-i18n="hero_text">Картузов Сергей — инструктор по вождению, который помогает не просто подготовиться к экзамену, а действительно чувствовать себя уверенно за рулём в городе, в потоке и на парковке.</p>
+
+            <div class="mechanic-badge">
+                <div class="mechanic-icon">⚙️</div>
+                <div class="mechanic-text">
+                    <span data-i18n="mechanic_title">Обучение только на механике</span>
+                    <p data-i18n="mechanic_text">Лучшее понимание машины и полный контроль на дороге</p>
+                </div>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="#contacts" class="btn btn-primary" data-i18n="btn_signup">Записаться</a>
+                <a href="#reviews" class="btn btn-secondary" data-i18n="btn_reviews">Смотреть отзывы</a>
+            </div>
+        </div>
+
+        <div class="hero-side fade">
+            <div class="instructor-photo-card">
+                <div class="photo-stage">
+                    <!-- Замени instructor-photo.png на своё фото без фона -->
+                    <img src="instructor-photo.png" alt="Картузов Сергей" class="instructor-photo" />
+                    <div class="photo-placeholder" data-i18n="photo_placeholder">Здесь будет фото инструктора</div>
+                </div>
+
+                <div class="instructor-info">
+                    <h3 data-i18n="instructor_name">Картузов Сергей</h3>
+                    <p data-i18n="instructor_role">Инструктор по вождению</p>
+                </div>
+            </div>
+
+            <div class="hero-card">
+                <h3 data-i18n="hero_card_title">Почему выбирают меня</h3>
+                <ul>
+                    <li data-i18n="hero_card_1">✅ Спокойное и понятное объяснение без крика и давления</li>
+                    <li data-i18n="hero_card_2">✅ Подготовка к экзамену и к реальному вождению по городу</li>
+                    <li data-i18n="hero_card_3">✅ Парковка, перекрёстки, перестроения и движение в потоке</li>
+                    <li data-i18n="hero_card_4">✅ Индивидуальный подход под твой уровень и темп</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="section fade">
+    <h2 class="section-title" data-i18n="about_title">Обо мне</h2>
+    <p class="section-subtitle" data-i18n="about_text">Я помогаю ученикам убрать страх дороги, разобраться в сложных ситуациях и научиться ездить уверенно, спокойно и безопасно. Главная цель занятий — чтобы ты не просто сдал экзамен, а реально умел водить.</p>
+
+    <div class="stats">
+        <div class="stat">
+            <strong>5.0</strong>
+            <span data-i18n="about_stat_1">Высокая оценка учеников</span>
+        </div>
+        <div class="stat">
+            <strong>100%</strong>
+            <span data-i18n="about_stat_2">Внимание к каждому ученику</span>
+        </div>
+        <div class="stat">
+            <strong>1 на 1</strong>
+            <span data-i18n="about_stat_3">Индивидуальные занятия</span>
+        </div>
+    </div>
+</section>
+
+<section id="services" class="section fade">
+    <h2 class="section-title" data-i18n="services_title">Услуги</h2>
+    <p class="section-subtitle" data-i18n="services_text">Занятия подходят как для начинающих, так и для тех, кто уже учился, но хочет уверенно чувствовать себя на дороге.</p>
+
+    <div class="cards">
+        <div class="card">
+            <h3 data-i18n="service_1_title">🚗 Обучение с нуля</h3>
+            <p data-i18n="service_1_text">Пошаговое обучение для тех, кто только начинает и хочет спокойно освоить управление автомобилем.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="service_2_title">🛣 Вождение по городу</h3>
+            <p data-i18n="service_2_text">Практика в реальных дорожных условиях: перекрёстки, поток, перестроения, развороты и сложные участки.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="service_3_title">🎯 Подготовка к экзамену</h3>
+            <p data-i18n="service_3_text">Разбор типичных ошибок, отработка экзаменационных маршрутов и уверенная подготовка к сдаче.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="service_4_title">🅿️ Парковка и манёвры</h3>
+            <p data-i18n="service_4_text">Отработка парковки, движения задним ходом, узких пространств и уверенного контроля автомобиля.</p>
+        </div>
+    </div>
+</section>
+
+<section id="process" class="section fade">
+    <h2 class="section-title" data-i18n="process_title">Как проходят занятия</h2>
+    <p class="section-subtitle" data-i18n="process_text">Каждое занятие строится так, чтобы ты постепенно прибавлял в уверенности и понимал, что делать в реальной дороге.</p>
+
+    <div class="cards">
+        <div class="card">
+            <h3 data-i18n="process_1_title">1️⃣ Знакомство</h3>
+            <p data-i18n="process_1_text">Спокойно разбираем основы управления автомобилем, посадку, контроль машины и ключевые действия водителя.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="process_2_title">2️⃣ Практика</h3>
+            <p data-i18n="process_2_text">Выезжаем в город и отрабатываем реальные ситуации: перекрёстки, поток машин, перестроения и парковку.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="process_3_title">3️⃣ Уверенность</h3>
+            <p data-i18n="process_3_text">Постепенно убираем страх и закрепляем навыки, чтобы ты чувствовал себя спокойно за рулём.</p>
+        </div>
+        <div class="card">
+            <h3 data-i18n="process_4_title">🎯 Результат</h3>
+            <p data-i18n="process_4_text">Ты лучше понимаешь дорогу, увереннее управляешь автомобилем и готов к экзамену и самостоятельной езде.</p>
+        </div>
+    </div>
+</section>
+
+<section id="reviews" class="section fade">
+    <h2 class="section-title" data-i18n="reviews_title">Отзывы учеников</h2>
+    <p class="section-subtitle" data-i18n="reviews_text">Отзывы тех, кто уже занимался и почувствовал реальный результат.</p>
+
+    <div class="reviews-wrapper">
+        <div class="reviews-track">
+            <!-- set 1 -->
+            <div class="review"><h3 data-i18n="review_name_1">Артём</h3><div class="stars">★★★★★</div><p data-i18n="review_text_1">Сдал с первого раза. Всё объясняется спокойно, понятно и без лишнего давления. После занятий реально появилась уверенность.</p></div>
+            <div class="review"><h3 data-i18n="review_name_2">Алина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_2">Очень боялась города, но постепенно страх ушёл. Теперь еду намного увереннее и лучше понимаю дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_3">Дмитрий</h3><div class="stars">★★★★★</div><p data-i18n="review_text_3">Лучше любой автошколы. Здесь реально учат водить, а не просто откатывать часы для галочки.</p></div>
+            <div class="review"><h3 data-i18n="review_name_4">Мария</h3><div class="stars">★★★★★</div><p data-i18n="review_text_4">После занятий парковка и движение в потоке перестали быть проблемой. Всё стало намного понятнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_5">Никита</h3><div class="stars">★★★★★</div><p data-i18n="review_text_5">Понравилось, что на занятиях всё идёт спокойно и по шагам. Ошибки разбираются нормально, без нервов и крика.</p></div>
+            <div class="review"><h3 data-i18n="review_name_6">Екатерина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_6">До занятий не чувствовала машину, а сейчас уже намного увереннее езжу по городу и лучше ориентируюсь в потоке.</p></div>
+            <div class="review"><h3 data-i18n="review_name_7">Илья</h3><div class="stars">★★★★★</div><p data-i18n="review_text_7">Очень помогла подготовка к экзамену. Разобрали типичные ошибки, сложные моменты и всё стало гораздо спокойнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_8">София</h3><div class="stars">★★★★★</div><p data-i18n="review_text_8">Мне понравился подход: всё объясняется простым языком, без лишней теории. На практике сразу начинаешь понимать дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_9">Максим</h3><div class="stars">★★★★★</div><p data-i18n="review_text_9">Хорошо отработали перекрёстки, развороты и парковку. После нескольких занятий уже чувствовал себя намного увереннее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_10">Полина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_10">Очень спокойная атмосфера на занятиях. Даже когда что-то не получалось, всё объяснялось без давления и спешки.</p></div>
+
+            <!-- set 2 -->
+            <div class="review"><h3 data-i18n="review_name_1">Артём</h3><div class="stars">★★★★★</div><p data-i18n="review_text_1">Сдал с первого раза. Всё объясняется спокойно, понятно и без лишнего давления. После занятий реально появилась уверенность.</p></div>
+            <div class="review"><h3 data-i18n="review_name_2">Алина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_2">Очень боялась города, но постепенно страх ушёл. Теперь еду намного увереннее и лучше понимаю дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_3">Дмитрий</h3><div class="stars">★★★★★</div><p data-i18n="review_text_3">Лучше любой автошколы. Здесь реально учат водить, а не просто откатывать часы для галочки.</p></div>
+            <div class="review"><h3 data-i18n="review_name_4">Мария</h3><div class="stars">★★★★★</div><p data-i18n="review_text_4">После занятий парковка и движение в потоке перестали быть проблемой. Всё стало намного понятнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_5">Никита</h3><div class="stars">★★★★★</div><p data-i18n="review_text_5">Понравилось, что на занятиях всё идёт спокойно и по шагам. Ошибки разбираются нормально, без нервов и крика.</p></div>
+            <div class="review"><h3 data-i18n="review_name_6">Екатерина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_6">До занятий не чувствовала машину, а сейчас уже намного увереннее езжу по городу и лучше ориентируюсь в потоке.</p></div>
+            <div class="review"><h3 data-i18n="review_name_7">Илья</h3><div class="stars">★★★★★</div><p data-i18n="review_text_7">Очень помогла подготовка к экзамену. Разобрали типичные ошибки, сложные моменты и всё стало гораздо спокойнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_8">София</h3><div class="stars">★★★★★</div><p data-i18n="review_text_8">Мне понравился подход: всё объясняется простым языком, без лишней теории. На практике сразу начинаешь понимать дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_9">Максим</h3><div class="stars">★★★★★</div><p data-i18n="review_text_9">Хорошо отработали перекрёстки, развороты и парковку. После нескольких занятий уже чувствовал себя намного увереннее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_10">Полина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_10">Очень спокойная атмосфера на занятиях. Даже когда что-то не получалось, всё объяснялось без давления и спешки.</p></div>
+
+            <!-- set 3 -->
+            <div class="review"><h3 data-i18n="review_name_1">Артём</h3><div class="stars">★★★★★</div><p data-i18n="review_text_1">Сдал с первого раза. Всё объясняется спокойно, понятно и без лишнего давления. После занятий реально появилась уверенность.</p></div>
+            <div class="review"><h3 data-i18n="review_name_2">Алина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_2">Очень боялась города, но постепенно страх ушёл. Теперь еду намного увереннее и лучше понимаю дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_3">Дмитрий</h3><div class="stars">★★★★★</div><p data-i18n="review_text_3">Лучше любой автошколы. Здесь реально учат водить, а не просто откатывать часы для галочки.</p></div>
+            <div class="review"><h3 data-i18n="review_name_4">Мария</h3><div class="stars">★★★★★</div><p data-i18n="review_text_4">После занятий парковка и движение в потоке перестали быть проблемой. Всё стало намного понятнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_5">Никита</h3><div class="stars">★★★★★</div><p data-i18n="review_text_5">Понравилось, что на занятиях всё идёт спокойно и по шагам. Ошибки разбираются нормально, без нервов и крика.</p></div>
+            <div class="review"><h3 data-i18n="review_name_6">Екатерина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_6">До занятий не чувствовала машину, а сейчас уже намного увереннее езжу по городу и лучше ориентируюсь в потоке.</p></div>
+            <div class="review"><h3 data-i18n="review_name_7">Илья</h3><div class="stars">★★★★★</div><p data-i18n="review_text_7">Очень помогла подготовка к экзамену. Разобрали типичные ошибки, сложные моменты и всё стало гораздо спокойнее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_8">София</h3><div class="stars">★★★★★</div><p data-i18n="review_text_8">Мне понравился подход: всё объясняется простым языком, без лишней теории. На практике сразу начинаешь понимать дорогу.</p></div>
+            <div class="review"><h3 data-i18n="review_name_9">Максим</h3><div class="stars">★★★★★</div><p data-i18n="review_text_9">Хорошо отработали перекрёстки, развороты и парковку. После нескольких занятий уже чувствовал себя намного увереннее.</p></div>
+            <div class="review"><h3 data-i18n="review_name_10">Полина</h3><div class="stars">★★★★★</div><p data-i18n="review_text_10">Очень спокойная атмосфера на занятиях. Даже когда что-то не получалось, всё объяснялось без давления и спешки.</p></div>
+        </div>
+    </div>
+</section>
+
+<section id="contacts" class="section fade">
+    <div class="contact-box">
+        <h2 data-i18n="contacts_title">Записаться на занятие</h2>
+        <p data-i18n="contacts_text">Свяжись со мной и мы подберём удобное время для занятий.</p>
+        <div class="phone">+7 933 685 31 02</div>
+        <button class="btn btn-primary" id="openContactModal" data-i18n="contacts_button">Связаться</button>
+    </div>
+</section>
+
+<footer class="footer">
+    <span data-i18n="footer_text">© 2026 Картузов Сергей — Инструктор по вождению</span>
+    <br><br>
+    <span data-i18n="footer_rights">Все права защищены</span> ·
+    <span class="privacy-link" id="openPrivacy" data-i18n="footer_privacy">Политика конфиденциальности</span>
+</footer>
+
+<div class="contact-modal-overlay" id="contactModalOverlay">
+    <div class="contact-modal" id="contactModal">
+        <button class="contact-modal-close" id="closeContactModal">✕</button>
+
+        <h3 data-i18n="contact_modal_title">Связаться с Сергеем</h3>
+        <p data-i18n="contact_modal_text">Выберите удобный способ связи</p>
+
+        <div class="contact-modal-buttons">
+            <a href="tel:+79336853102" class="contact-option" data-i18n="contact_option_call">📞 Max</a>
+            <a href="https://wa.me/79336853102" class="contact-option" target="_blank" data-i18n="contact_option_whatsapp">🟢 WhatsApp</a>
+            <a href="https://t.me/kartuzov_drive" class="contact-option" target="_blank" data-i18n="contact_option_telegram">🔵 Telegram</a>
+            <a href="tel:+79336853102" class="contact-option primary-option" data-i18n="contact_option_phone">📱 Просто позвонить</a>
+        </div>
+    </div>
+</div>
+
+<div class="privacy-overlay" id="privacyOverlay">
+    <div class="privacy-modal">
+        <button class="privacy-close" id="closePrivacy">✕</button>
+        <div class="privacy-content">
+            <h3 data-i18n="privacy_title">Политика конфиденциальности</h3>
+
+            <p><strong data-i18n="privacy_person_label">ИП / Самозанятый:</strong> <span data-i18n="privacy_person_value">Картузов Сергей Анатольевич</span></p>
+            <p><strong data-i18n="privacy_site_label">Сайт:</strong> kartuzov-drive.com</p>
+            <p><strong data-i18n="privacy_date_label">Дата вступления в силу:</strong> 2026</p>
+
+            <br>
+
+            <p><strong data-i18n="privacy_1_title">1. Общие положения</strong></p>
+            <p data-i18n="privacy_1_text">Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей сайта. Используя сайт, вы соглашаетесь с данной Политикой.</p>
+
+            <p><strong data-i18n="privacy_2_title">2. Какие данные мы собираем</strong></p>
+            <p data-i18n="privacy_2_text">• Имя и фамилия<br>• Номер телефона<br>• Электронная почта (если указана)<br>• Данные из форм записи<br>• Технические данные (IP, cookies, браузер)</p>
+
+            <p><strong data-i18n="privacy_3_title">3. Цели обработки данных</strong></p>
+            <p data-i18n="privacy_3_text">• Связь с пользователем<br>• Запись на занятия<br>• Консультации<br>• Улучшение работы сайта<br>• Соблюдение закона</p>
+
+            <p><strong data-i18n="privacy_4_title">4. Правовые основания</strong></p>
+            <p data-i18n="privacy_4_text">• Согласие пользователя<br>• Исполнение договора<br>• Законные интересы владельца</p>
+
+            <p><strong data-i18n="privacy_5_title">5. Хранение и защита</strong></p>
+            <p data-i18n="privacy_5_text">Мы принимаем меры для защиты данных: ограничение доступа, использование HTTPS, защита от несанкционированного доступа.</p>
+
+            <p><strong data-i18n="privacy_6_title">6. Передача третьим лицам</strong></p>
+            <p data-i18n="privacy_6_text">Данные не передаются третьим лицам, кроме случаев, предусмотренных законодательством или необходимых для оказания услуг.</p>
+
+            <p><strong data-i18n="privacy_7_title">7. Cookies</strong></p>
+            <p data-i18n="privacy_7_text">Сайт может использовать cookies для улучшения работы и аналитики. Вы можете отключить их в настройках браузера.</p>
+
+            <p><strong data-i18n="privacy_8_title">8. Права пользователя</strong></p>
+            <p data-i18n="privacy_8_text">Вы имеете право:<br>• узнать свои данные<br>• изменить или удалить их<br>• отозвать согласие</p>
+
+            <p><strong data-i18n="privacy_9_title">9. Контакты</strong></p>
+            <p data-i18n="privacy_9_text">Картузов Сергей Анатольевич<br>Инструктор по вождению<br>Сайт: kartuzov-drive.com</p>
+
+            <p><strong data-i18n="privacy_10_title">10. Изменения</strong></p>
+            <p data-i18n="privacy_10_text">Политика может обновляться. Актуальная версия всегда доступна на сайте.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+/* translations */
+
+const languageLabels = {
+    ru: "🇷🇺 RU ▾",
+    en: "🇬🇧 EN ▾",
+    sr: "🇷🇸 SR ▾"
+};
+
+const translations = {
+    ru: {
+        nav_home: "Главная",
+        nav_about: "Обо мне",
+        nav_services: "Услуги",
+        nav_process: "Как проходят занятия",
+        nav_reviews: "Отзывы",
+        nav_contacts: "Контакты",
+
+        hero_title: "Научись водить уверенно и спокойно",
+        hero_text: "Картузов Сергей — инструктор по вождению, который помогает не просто подготовиться к экзамену, а действительно чувствовать себя уверенно за рулём в городе, в потоке и на парковке.",
+        mechanic_title: "Обучение только на механике",
+        mechanic_text: "Лучшее понимание машины и полный контроль на дороге",
+        btn_signup: "Записаться",
+        btn_reviews: "Смотреть отзывы",
+
+        hero_card_title: "Почему выбирают меня",
+        hero_card_1: "✅ Спокойное и понятное объяснение без крика и давления",
+        hero_card_2: "✅ Подготовка к экзамену и к реальному вождению по городу",
+        hero_card_3: "✅ Парковка, перекрёстки, перестроения и движение в потоке",
+        hero_card_4: "✅ Индивидуальный подход под твой уровень и темп",
+
+        about_title: "Обо мне",
+        about_text: "Я помогаю ученикам убрать страх дороги, разобраться в сложных ситуациях и научиться ездить уверенно, спокойно и безопасно. Главная цель занятий — чтобы ты не просто сдал экзамен, а реально умел водить.",
+        about_stat_1: "Высокая оценка учеников",
+        about_stat_2: "Внимание к каждому ученику",
+        about_stat_3: "Индивидуальные занятия",
+
+        services_title: "Услуги",
+        services_text: "Занятия подходят как для начинающих, так и для тех, кто уже учился, но хочет уверенно чувствовать себя на дороге.",
+        service_1_title: "🚗 Обучение с нуля",
+        service_1_text: "Пошаговое обучение для тех, кто только начинает и хочет спокойно освоить управление автомобилем.",
+        service_2_title: "🛣 Вождение по городу",
+        service_2_text: "Практика в реальных дорожных условиях: перекрёстки, поток, перестроения, развороты и сложные участки.",
+        service_3_title: "🎯 Подготовка к экзамену",
+        service_3_text: "Разбор типичных ошибок, отработка экзаменационных маршрутов и уверенная подготовка к сдаче.",
+        service_4_title: "🅿️ Парковка и манёвры",
+        service_4_text: "Отработка парковки, движения задним ходом, узких пространств и уверенного контроля автомобиля.",
+
+        process_title: "Как проходят занятия",
+        process_text: "Каждое занятие строится так, чтобы ты постепенно прибавлял в уверенности и понимал, что делать в реальной дороге.",
+        process_1_title: "1️⃣ Знакомство",
+        process_1_text: "Спокойно разбираем основы управления автомобилем, посадку, контроль машины и ключевые действия водителя.",
+        process_2_title: "2️⃣ Практика",
+        process_2_text: "Выезжаем в город и отрабатываем реальные ситуации: перекрёстки, поток машин, перестроения и парковку.",
+        process_3_title: "3️⃣ Уверенность",
+        process_3_text: "Постепенно убираем страх и закрепляем навыки, чтобы ты чувствовал себя спокойно за рулём.",
+        process_4_title: "🎯 Результат",
+        process_4_text: "Ты лучше понимаешь дорогу, увереннее управляешь автомобилем и готов к экзамену и самостоятельной езде.",
+
+        reviews_title: "Отзывы учеников",
+        reviews_text: "Отзывы тех, кто уже занимался и почувствовал реальный результат.",
+
+        review_name_1: "Артём",
+        review_text_1: "Сдал с первого раза. Всё объясняется спокойно, понятно и без лишнего давления. После занятий реально появилась уверенность.",
+        review_name_2: "Алина",
+        review_text_2: "Очень боялась города, но постепенно страх ушёл. Теперь еду намного увереннее и лучше понимаю дорогу.",
+        review_name_3: "Дмитрий",
+        review_text_3: "Лучше любой автошколы. Здесь реально учат водить, а не просто откатывать часы для галочки.",
+        review_name_4: "Мария",
+        review_text_4: "После занятий парковка и движение в потоке перестали быть проблемой. Всё стало намного понятнее.",
+        review_name_5: "Никита",
+        review_text_5: "Понравилось, что на занятиях всё идёт спокойно и по шагам. Ошибки разбираются нормально, без нервов и крика.",
+        review_name_6: "Екатерина",
+        review_text_6: "До занятий не чувствовала машину, а сейчас уже намного увереннее езжу по городу и лучше ориентируюсь в потоке.",
+        review_name_7: "Илья",
+        review_text_7: "Очень помогла подготовка к экзамену. Разобрали типичные ошибки, сложные моменты и всё стало гораздо спокойнее.",
+        review_name_8: "София",
+        review_text_8: "Мне понравился подход: всё объясняется простым языком, без лишней теории. На практике сразу начинаешь понимать дорогу.",
+        review_name_9: "Максим",
+        review_text_9: "Хорошо отработали перекрёстки, развороты и парковку. После нескольких занятий уже чувствовал себя намного увереннее.",
+        review_name_10: "Полина",
+        review_text_10: "Очень спокойная атмосфера на занятиях. Даже когда что-то не получалось, всё объяснялось без давления и спешки.",
+
+        contacts_title: "Записаться на занятие",
+        contacts_text: "Свяжись со мной и мы подберём удобное время для занятий.",
+        contacts_button: "Связаться",
+
+        footer_text: "© 2026 Картузов Сергей — Инструктор по вождению",
+        footer_rights: "Все права защищены",
+        footer_privacy: "Политика конфиденциальности",
+
+        contact_modal_title: "Связаться с Сергеем",
+        contact_modal_text: "Выберите удобный способ связи",
+        contact_option_call: "📞 Max",
+        contact_option_whatsapp: "🟢 WhatsApp",
+        contact_option_telegram: "🔵 Telegram",
+        contact_option_phone: "📱 Просто позвонить",
+
+        privacy_title: "Политика конфиденциальности",
+        privacy_person_label: "ИП / Самозанятый:",
+        privacy_person_value: "Картузов Сергей Анатольевич",
+        privacy_site_label: "Сайт:",
+        privacy_date_label: "Дата вступления в силу:",
+        privacy_1_title: "1. Общие положения",
+        privacy_1_text: "Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей сайта. Используя сайт, вы соглашаетесь с данной Политикой.",
+        privacy_2_title: "2. Какие данные мы собираем",
+        privacy_2_text: "• Имя и фамилия<br>• Номер телефона<br>• Электронная почта (если указана)<br>• Данные из форм записи<br>• Технические данные (IP, cookies, браузер)",
+        privacy_3_title: "3. Цели обработки данных",
+        privacy_3_text: "• Связь с пользователем<br>• Запись на занятия<br>• Консультации<br>• Улучшение работы сайта<br>• Соблюдение закона",
+        privacy_4_title: "4. Правовые основания",
+        privacy_4_text: "• Согласие пользователя<br>• Исполнение договора<br>• Законные интересы владельца",
+        privacy_5_title: "5. Хранение и защита",
+        privacy_5_text: "Мы принимаем меры для защиты данных: ограничение доступа, использование HTTPS, защита от несанкционированного доступа.",
+        privacy_6_title: "6. Передача третьим лицам",
+        privacy_6_text: "Данные не передаются третьим лицам, кроме случаев, предусмотренных законодательством или необходимых для оказания услуг.",
+        privacy_7_title: "7. Cookies",
+        privacy_7_text: "Сайт может использовать cookies для улучшения работы и аналитики. Вы можете отключить их в настройках браузера.",
+        privacy_8_title: "8. Права пользователя",
+        privacy_8_text: "Вы имеете право:<br>• узнать свои данные<br>• изменить или удалить их<br>• отозвать согласие",
+        privacy_9_title: "9. Контакты",
+        privacy_9_text: "Картузов Сергей Анатольевич<br>Инструктор по вождению<br>Сайт: kartuzov-drive.com",
+        privacy_10_title: "10. Изменения",
+        privacy_10_text: "Политика может обновляться. Актуальная версия всегда доступна на сайте.",
+
+        rotate_title: "Переверните телефон",
+        rotate_text: "Сайт лучше выглядит в вертикальном положении",
+        photo_placeholder: "Здесь будет фото инструктора",
+        instructor_name: "Картузов Сергей",
+        instructor_role: "Инструктор по вождению"
+    },
+
+    en: {
+        nav_home: "Home",
+        nav_about: "About",
+        nav_services: "Services",
+        nav_process: "How lessons work",
+        nav_reviews: "Reviews",
+        nav_contacts: "Contacts",
+
+        hero_title: "Learn to drive confidently and calmly",
+        hero_text: "Sergey Kartuzov is a driving instructor who helps you not only prepare for the exam, but also feel confident behind the wheel in the city, in traffic, and while parking.",
+        mechanic_title: "Training only on manual transmission",
+        mechanic_text: "Better understanding of the car and full control on the road",
+        btn_signup: "Book now",
+        btn_reviews: "View reviews",
+
+        hero_card_title: "Why choose me",
+        hero_card_1: "✅ Calm and clear explanation without shouting or pressure",
+        hero_card_2: "✅ Preparation for the exam and real city driving",
+        hero_card_3: "✅ Parking, intersections, lane changes and traffic flow",
+        hero_card_4: "✅ Individual approach to your level and pace",
+
+        about_title: "About me",
+        about_text: "I help students overcome fear of the road, understand difficult situations and learn to drive confidently, calmly and safely. The main goal is not just to pass the exam, but to truly know how to drive.",
+        about_stat_1: "High student rating",
+        about_stat_2: "Attention to every student",
+        about_stat_3: "One-on-one lessons",
+
+        services_title: "Services",
+        services_text: "Lessons are suitable both for beginners and for those who have already studied but want to feel more confident on the road.",
+        service_1_title: "🚗 Training from scratch",
+        service_1_text: "Step-by-step driving lessons for those who are just starting and want to master car control calmly.",
+        service_2_title: "🛣 City driving",
+        service_2_text: "Practice in real road conditions: intersections, traffic, lane changes, turns and difficult sections.",
+        service_3_title: "🎯 Exam preparation",
+        service_3_text: "Analysis of common mistakes, practice on exam routes and confident preparation for the test.",
+        service_4_title: "🅿️ Parking and maneuvers",
+        service_4_text: "Parking practice, reversing, tight spaces and confident vehicle control.",
+
+        process_title: "How lessons work",
+        process_text: "Each lesson is structured so that you gradually gain confidence and understand what to do in real road situations.",
+        process_1_title: "1️⃣ Introduction",
+        process_1_text: "We calmly go through the basics of car control, seating, car handling and the key actions of a driver.",
+        process_2_title: "2️⃣ Practice",
+        process_2_text: "We drive in the city and practice real situations: intersections, traffic flow, lane changes and parking.",
+        process_3_title: "3️⃣ Confidence",
+        process_3_text: "We gradually remove fear and reinforce your skills so that you feel calm behind the wheel.",
+        process_4_title: "🎯 Result",
+        process_4_text: "You understand the road better, drive more confidently and are ready for both the exam and independent driving.",
+
+        reviews_title: "Student reviews",
+        reviews_text: "Feedback from people who have already trained and felt real results.",
+
+        review_name_1: "Artyom",
+        review_text_1: "I passed on the first try. Everything is explained calmly, clearly and without unnecessary pressure. After the lessons I really felt more confident.",
+        review_name_2: "Alina",
+        review_text_2: "I was very afraid of city driving, but gradually the fear disappeared. Now I drive much more confidently and understand the road better.",
+        review_name_3: "Dmitry",
+        review_text_3: "Better than any driving school. Here they really teach you to drive, not just fill the required hours.",
+        review_name_4: "Maria",
+        review_text_4: "After the lessons, parking and driving in traffic were no longer a problem. Everything became much clearer.",
+        review_name_5: "Nikita",
+        review_text_5: "I liked that the lessons go calmly and step by step. Mistakes are discussed normally, without nerves or shouting.",
+        review_name_6: "Ekaterina",
+        review_text_6: "Before the lessons I didn’t really feel the car, and now I drive much more confidently in the city and navigate traffic better.",
+        review_name_7: "Ilya",
+        review_text_7: "The exam preparation helped a lot. We covered common mistakes, difficult moments, and everything became much calmer.",
+        review_name_8: "Sofia",
+        review_text_8: "I liked the approach: everything is explained in simple language, without unnecessary theory. In practice, you begin to understand the road right away.",
+        review_name_9: "Maksim",
+        review_text_9: "We worked well on intersections, U-turns and parking. After several lessons I already felt much more confident.",
+        review_name_10: "Polina",
+        review_text_10: "A very calm atmosphere during the lessons. Even when something didn’t work out, everything was explained without pressure or rush.",
+
+        contacts_title: "Book a lesson",
+        contacts_text: "Contact me and we will choose a convenient time for your lessons.",
+        contacts_button: "Contact",
+
+        footer_text: "© 2026 Sergey Kartuzov — Driving Instructor",
+        footer_rights: "All rights reserved",
+        footer_privacy: "Privacy Policy",
+
+        contact_modal_title: "Contact Sergey",
+        contact_modal_text: "Choose a convenient way to get in touch",
+        contact_option_call: "📞 Max",
+        contact_option_whatsapp: "🟢 WhatsApp",
+        contact_option_telegram: "🔵 Telegram",
+        contact_option_phone: "📱 Just call",
+
+        privacy_title: "Privacy Policy",
+        privacy_person_label: "Sole proprietor / Self-employed:",
+        privacy_person_value: "Sergey Anatolyevich Kartuzov",
+        privacy_site_label: "Website:",
+        privacy_date_label: "Effective date:",
+        privacy_1_title: "1. General provisions",
+        privacy_1_text: "This Privacy Policy defines the procedure for processing and protecting personal data of website users. By using the site, you agree to this Policy.",
+        privacy_2_title: "2. What data we collect",
+        privacy_2_text: "• First and last name<br>• Phone number<br>• Email address (if provided)<br>• Data submitted through booking forms<br>• Technical data (IP, cookies, browser)",
+        privacy_3_title: "3. Purposes of processing",
+        privacy_3_text: "• Communication with the user<br>• Booking driving lessons<br>• Consultations<br>• Improving the website<br>• Compliance with legal requirements",
+        privacy_4_title: "4. Legal grounds",
+        privacy_4_text: "• User consent<br>• Contract performance<br>• Legitimate interests of the site owner",
+        privacy_5_title: "5. Storage and protection",
+        privacy_5_text: "We take measures to protect data: access restriction, HTTPS usage, and protection against unauthorized access.",
+        privacy_6_title: "6. Transfer to third parties",
+        privacy_6_text: "Personal data is not transferred to third parties except where required by law or necessary to provide services.",
+        privacy_7_title: "7. Cookies",
+        privacy_7_text: "The website may use cookies to improve performance and analytics. You can disable them in your browser settings.",
+        privacy_8_title: "8. User rights",
+        privacy_8_text: "You have the right to:<br>• know what data is stored about you<br>• correct or delete it<br>• withdraw your consent",
+        privacy_9_title: "9. Contacts",
+        privacy_9_text: "Sergey Anatolyevich Kartuzov<br>Driving instructor<br>Website: kartuzov-drive.com",
+        privacy_10_title: "10. Changes",
+        privacy_10_text: "The Policy may be updated. The current version is always available on the website.",
+
+        rotate_title: "Rotate your phone",
+        rotate_text: "The site looks better in portrait mode",
+        photo_placeholder: "Instructor photo will be here",
+        instructor_name: "Sergey Kartuzov",
+        instructor_role: "Driving instructor"
+    },
+
+    sr: {
+        nav_home: "Početna",
+        nav_about: "O meni",
+        nav_services: "Usluge",
+        nav_process: "Kako izgledaju časovi",
+        nav_reviews: "Recenzije",
+        nav_contacts: "Kontakt",
+
+        hero_title: "Nauči da voziš sigurno i smireno",
+        hero_text: "Sergej Kartuzov je instruktor vožnje koji pomaže ne samo da se pripremiš za ispit, već i da se osećaš sigurno za volanom u gradu, u saobraćaju i pri parkiranju.",
+        mechanic_title: "Obuka samo na manuelnom menjaču",
+        mechanic_text: "Bolje razumevanje automobila i potpuna kontrola na putu",
+        btn_signup: "Prijavi se",
+        btn_reviews: "Pogledaj recenzije",
+
+        hero_card_title: "Zašto izabrati mene",
+        hero_card_1: "✅ Mirno i jasno objašnjenje bez vike i pritiska",
+        hero_card_2: "✅ Priprema za ispit i za stvarnu vožnju po gradu",
+        hero_card_3: "✅ Parkiranje, raskrsnice, prestrojavanje i vožnja u saobraćaju",
+        hero_card_4: "✅ Individualni pristup tvom nivou i tempu",
+
+        about_title: "O meni",
+        about_text: "Pomažem učenicima da prevaziđu strah od puta, razumeju teške situacije i nauče da voze sigurno, mirno i bezbedno. Glavni cilj časova nije samo da položiš ispit, već da zaista znaš da voziš.",
+        about_stat_1: "Visoka ocena učenika",
+        about_stat_2: "Pažnja za svakog učenika",
+        about_stat_3: "Časovi jedan na jedan",
+
+        services_title: "Usluge",
+        services_text: "Časovi su pogodni i za početnike i za one koji su već učili, ali žele da se osećaju sigurnije na putu.",
+        service_1_title: "🚗 Obuka od nule",
+        service_1_text: "Korak po korak obuka za one koji tek počinju i žele mirno da savladaju upravljanje automobilom.",
+        service_2_title: "🛣 Vožnja po gradu",
+        service_2_text: "Vežba u realnim uslovima: raskrsnice, saobraćaj, prestrojavanje, skretanja i teške deonice.",
+        service_3_title: "🎯 Priprema za ispit",
+        service_3_text: "Analiza tipičnih grešaka, vežbanje ispitnih ruta i sigurna priprema za polaganje.",
+        service_4_title: "🅿️ Parkiranje i manevri",
+        service_4_text: "Vežbanje parkiranja, vožnje unazad, uskih prostora i sigurnog upravljanja vozilom.",
+
+        process_title: "Kako izgledaju časovi",
+        process_text: "Svaki čas je organizovan tako da postepeno stičeš sigurnost i razumeš šta treba da radiš u realnim situacijama na putu.",
+        process_1_title: "1️⃣ Upoznavanje",
+        process_1_text: "Mirno prolazimo kroz osnove upravljanja automobilom, položaj sedenja, kontrolu vozila i ključne radnje vozača.",
+        process_2_title: "2️⃣ Praksa",
+        process_2_text: "Izlazimo u grad i vežbamo stvarne situacije: raskrsnice, saobraćaj, prestrojavanje i parkiranje.",
+        process_3_title: "3️⃣ Sigurnost",
+        process_3_text: "Postepeno uklanjamo strah i učvršćujemo veštine kako bi se osećao mirno za volanom.",
+        process_4_title: "🎯 Rezultat",
+        process_4_text: "Bolje razumeš put, sigurnije upravljaš automobilom i spreman si za ispit i samostalnu vožnju.",
+
+        reviews_title: "Recenzije učenika",
+        reviews_text: "Utisci ljudi koji su već pohađali časove i osetili pravi rezultat.",
+
+        review_name_1: "Artjom",
+        review_text_1: "Položio sam iz prvog puta. Sve je objašnjeno mirno, jasno i bez nepotrebnog pritiska. Posle časova sam zaista stekao sigurnost.",
+        review_name_2: "Alina",
+        review_text_2: "Mnogo sam se plašila gradske vožnje, ali je strah postepeno nestao. Sada vozim mnogo sigurnije i bolje razumem put.",
+        review_name_3: "Dmitrij",
+        review_text_3: "Bolje od bilo koje auto-škole. Ovde te stvarno uče da voziš, a ne samo da odradiš sate.",
+        review_name_4: "Marija",
+        review_text_4: "Posle časova parkiranje i vožnja u saobraćaju više nisu problem. Sve je postalo mnogo jasnije.",
+        review_name_5: "Nikita",
+        review_text_5: "Dopalo mi se što časovi prolaze mirno i korak po korak. Greške se normalno objašnjavaju, bez nervoze i vike.",
+        review_name_6: "Ekaterina",
+        review_text_6: "Pre časova nisam osećala automobil, a sada vozim mnogo sigurnije po gradu i bolje se snalazim u saobraćaju.",
+        review_name_7: "Ilja",
+        review_text_7: "Priprema za ispit mi je mnogo pomogla. Prošli smo tipične greške i teške trenutke, pa je sve postalo mnogo mirnije.",
+        review_name_8: "Sofija",
+        review_text_8: "Svideo mi se pristup: sve se objašnjava jednostavnim jezikom, bez suvišne teorije. U praksi odmah počneš da razumeš put.",
+        review_name_9: "Maksim",
+        review_text_9: "Dobro smo uvežbali raskrsnice, polukružna okretanja i parkiranje. Posle nekoliko časova osećao sam se mnogo sigurnije.",
+        review_name_10: "Polina",
+        review_text_10: "Veoma mirna atmosfera na časovima. Čak i kada nešto nije uspevalo, sve je objašnjeno bez pritiska i žurbe.",
+
+        contacts_title: "Prijavi se za čas",
+        contacts_text: "Kontaktiraj me i zajedno ćemo izabrati odgovarajuće vreme za časove.",
+        contacts_button: "Kontakt",
+
+        footer_text: "© 2026 Sergej Kartuzov — Instruktor vožnje",
+        footer_rights: "Sva prava zadržana",
+        footer_privacy: "Politika privatnosti",
+
+        contact_modal_title: "Kontaktiraj Sergeja",
+        contact_modal_text: "Izaberi način komunikacije koji ti odgovara",
+        contact_option_call: "📞 Max",
+        contact_option_whatsapp: "🟢 WhatsApp",
+        contact_option_telegram: "🔵 Telegram",
+        contact_option_phone: "📱 Pozovi",
+
+        privacy_title: "Politika privatnosti",
+        privacy_person_label: "Preduzetnik / Samozaposleni:",
+        privacy_person_value: "Sergej Anatoljevič Kartuzov",
+        privacy_site_label: "Sajt:",
+        privacy_date_label: "Datum stupanja na snagu:",
+        privacy_1_title: "1. Opšte odredbe",
+        privacy_1_text: "Ova Politika privatnosti određuje način obrade i zaštite ličnih podataka korisnika sajta. Korišćenjem sajta prihvatate ovu Politiku.",
+        privacy_2_title: "2. Koje podatke prikupljamo",
+        privacy_2_text: "• Ime i prezime<br>• Broj telefona<br>• Email adresa (ako je navedena)<br>• Podaci poslati kroz forme za prijavu<br>• Tehnički podaci (IP, cookies, pregledač)",
+        privacy_3_title: "3. Svrha obrade podataka",
+        privacy_3_text: "• Komunikacija sa korisnikom<br>• Prijava na časove vožnje<br>• Konsultacije<br>• Unapređenje rada sajta<br>• Poštovanje zakonskih obaveza",
+        privacy_4_title: "4. Pravni osnov",
+        privacy_4_text: "• Saglasnost korisnika<br>• Izvršenje ugovora<br>• Legitimni interes vlasnika sajta",
+        privacy_5_title: "5. Čuvanje i zaštita",
+        privacy_5_text: "Preduzimamo mere za zaštitu podataka: ograničen pristup, korišćenje HTTPS-a i zaštitu od neovlašćenog pristupa.",
+        privacy_6_title: "6. Prosleđivanje trećim licima",
+        privacy_6_text: "Lični podaci se ne prosleđuju trećim licima osim kada to zakon zahteva ili je neophodno za pružanje usluga.",
+        privacy_7_title: "7. Cookies",
+        privacy_7_text: "Sajt može koristiti cookies radi boljeg rada i analitike. Možete ih isključiti u podešavanjima pregledača.",
+        privacy_8_title: "8. Prava korisnika",
+        privacy_8_text: "Imate pravo da:<br>• saznate koji podaci se čuvaju o vama<br>• ih ispravite ili izbrišete<br>• povučete saglasnost",
+        privacy_9_title: "9. Kontakti",
+        privacy_9_text: "Sergej Anatoljevič Kartuzov<br>Instruktor vožnje<br>Sajt: kartuzov-drive.com",
+        privacy_10_title: "10. Izmene",
+        privacy_10_text: "Politika može biti ažurirana. Aktuelna verzija je uvek dostupna na sajtu.",
+
+        rotate_title: "Okrenite telefon",
+        rotate_text: "Sajt izgleda bolje u uspravnom položaju",
+        photo_placeholder: "Ovde će biti fotografija instruktora",
+        instructor_name: "Sergej Kartuzov",
+        instructor_role: "Instruktor vožnje"
+    }
+};
+
+function setElementContent(el, value) {
+    if (value.includes("<br>")) {
+        el.innerHTML = value;
+    } else {
+        el.textContent = value;
+    }
+}
+
+function setLanguage(lang) {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.dataset.i18n;
+        if (translations[lang] && translations[lang][key]) {
+            setElementContent(el, translations[lang][key]);
+        }
+    });
+
+    const label = languageLabels[lang] || "🇷🇺 RU ▾";
+    const desktopCurrent = document.getElementById("langCurrent");
+    const mobileCurrent = document.getElementById("mobileLangCurrent");
+
+    if (desktopCurrent) desktopCurrent.textContent = label;
+    if (mobileCurrent) mobileCurrent.textContent = label;
+
+    localStorage.setItem("siteLanguage", lang);
+    document.documentElement.lang = lang;
+}
+
+/* fade animation */
+document.body.classList.add('js-animate');
+
+const fadeElements = document.querySelectorAll('.fade');
+function checkFadeElements() {
+    const triggerBottom = window.innerHeight * 0.9;
+    fadeElements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < triggerBottom) {
+            el.classList.add('show');
+        }
+    });
+}
+window.addEventListener('scroll', checkFadeElements);
+window.addEventListener('load', checkFadeElements);
+window.addEventListener('resize', checkFadeElements);
+checkFadeElements();
+
+/* particles */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const particles = [];
+const particleCount = 70;
+for (let i = 0; i < particleCount; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.8 + 0.4,
+        dx: (Math.random() - 0.5) * 0.35,
+        dy: (Math.random() - 0.5) * 0.35,
+        a: Math.random() * 0.6 + 0.2
+    });
+}
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(96,165,250," + p.a + ")";
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+    }
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* lock scroll */
+function lockScroll() {
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = scrollBarWidth + 'px';
+    document.body.classList.add('no-scroll');
+}
+function unlockScroll() {
+    document.body.style.paddingRight = '';
+    document.body.classList.remove('no-scroll');
+}
+
+/* mobile menu */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+function openMenu() {
+    mobileMenu.classList.add('active');
+    menuOverlay.classList.add('active');
+    menuToggle.textContent = '✕';
+}
+function closeMenu() {
+    mobileMenu.classList.remove('active');
+    menuOverlay.classList.remove('active');
+    menuToggle.textContent = '☰';
+}
+function toggleMenu() {
+    if (mobileMenu.classList.contains('active')) closeMenu();
+    else openMenu();
+}
+if (menuToggle) menuToggle.addEventListener('click', toggleMenu);
+if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+});
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeMenu();
+});
+
+/* contact modal */
+const openContactModal = document.getElementById('openContactModal');
+const contactModalOverlay = document.getElementById('contactModalOverlay');
+const closeContactModal = document.getElementById('closeContactModal');
+
+function openModal() {
+    if (contactModalOverlay) {
+        contactModalOverlay.classList.add('active');
+        lockScroll();
+    }
+}
+function closeModal() {
+    if (contactModalOverlay) {
+        contactModalOverlay.classList.remove('active');
+        unlockScroll();
+    }
+}
+if (openContactModal) openContactModal.addEventListener('click', openModal);
+if (closeContactModal) closeContactModal.addEventListener('click', closeModal);
+if (contactModalOverlay) {
+    contactModalOverlay.addEventListener('click', (e) => {
+        if (e.target === contactModalOverlay) closeModal();
+    });
+}
+
+/* privacy modal */
+const openPrivacy = document.getElementById('openPrivacy');
+const closePrivacy = document.getElementById('closePrivacy');
+const privacyOverlay = document.getElementById('privacyOverlay');
+
+function openPrivacyModal() {
+    if (privacyOverlay) {
+        privacyOverlay.classList.add('active');
+        lockScroll();
+    }
+}
+function closePrivacyModal() {
+    if (privacyOverlay) {
+        privacyOverlay.classList.remove('active');
+        unlockScroll();
+    }
+}
+if (openPrivacy) openPrivacy.addEventListener('click', openPrivacyModal);
+if (closePrivacy) closePrivacy.addEventListener('click', closePrivacyModal);
+if (privacyOverlay) {
+    privacyOverlay.addEventListener('click', (e) => {
+        if (e.target === privacyOverlay) closePrivacyModal();
+    });
+}
+
+/* escape close */
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (contactModalOverlay && contactModalOverlay.classList.contains('active')) closeModal();
+        if (privacyOverlay && privacyOverlay.classList.contains('active')) closePrivacyModal();
+    }
+});
+
+/* rotate overlay */
+const rotateOverlay = document.getElementById('rotateOverlay');
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+           (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+}
+function checkOrientationOverlay() {
+    const isMobile = isMobileDevice();
+    const isLandscape = window.innerWidth > window.innerHeight;
+
+    if (isMobile && isLandscape) {
+        rotateOverlay.classList.add('active');
+        document.body.classList.add('no-scroll');
+    } else {
+        rotateOverlay.classList.remove('active');
+        const isContactOpen = contactModalOverlay && contactModalOverlay.classList.contains('active');
+        const isPrivacyOpen = privacyOverlay && privacyOverlay.classList.contains('active');
+        if (!isContactOpen && !isPrivacyOpen) {
+            document.body.classList.remove('no-scroll');
+            document.body.style.paddingRight = '';
+        }
+    }
+}
+window.addEventListener('load', checkOrientationOverlay);
+window.addEventListener('resize', checkOrientationOverlay);
+window.addEventListener('orientationchange', checkOrientationOverlay);
+checkOrientationOverlay();
+
+/* language dropdown */
+const desktopLangDropdown = document.getElementById("langDropdown");
+const mobileLangDropdown = document.getElementById("mobileLangDropdown");
+const desktopLangCurrent = document.getElementById("langCurrent");
+const mobileLangCurrent = document.getElementById("mobileLangCurrent");
+
+function toggleDropdown(dropdown) {
+    if (dropdown) dropdown.classList.toggle("active");
+}
+if (desktopLangCurrent) {
+    desktopLangCurrent.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(desktopLangDropdown);
+    });
+}
+if (mobileLangCurrent) {
+    mobileLangCurrent.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(mobileLangDropdown);
+    });
+}
+document.querySelectorAll(".lang-item").forEach((item) => {
+    item.addEventListener("click", () => {
+        const lang = item.dataset.lang;
+        setLanguage(lang);
+        if (desktopLangDropdown) desktopLangDropdown.classList.remove("active");
+        if (mobileLangDropdown) mobileLangDropdown.classList.remove("active");
+    });
+});
+document.addEventListener("click", (e) => {
+    if (desktopLangDropdown && !desktopLangDropdown.contains(e.target)) {
+        desktopLangDropdown.classList.remove("active");
+    }
+    if (mobileLangDropdown && !mobileLangDropdown.contains(e.target)) {
+        mobileLangDropdown.classList.remove("active");
+    }
+});
+
+
+/* instructor photo placeholder */
+const instructorPhoto = document.querySelector('.instructor-photo');
+const photoPlaceholder = document.querySelector('.photo-placeholder');
+if (instructorPhoto && photoPlaceholder) {
+    function updatePhotoState() {
+        const hasRealPhoto =
+            instructorPhoto.getAttribute('src') &&
+            instructorPhoto.getAttribute('src') !== 'instructor-photo.png' &&
+            instructorPhoto.complete &&
+            instructorPhoto.naturalWidth > 0;
+
+        if (hasRealPhoto) {
+            photoPlaceholder.style.display = 'none';
+        } else {
+            photoPlaceholder.style.display = 'flex';
+        }
+    }
+
+    instructorPhoto.addEventListener('load', updatePhotoState);
+    instructorPhoto.addEventListener('error', () => {
+        photoPlaceholder.style.display = 'flex';
+    });
+    updatePhotoState();
+}
+
+
+/* init language */
+const savedLanguage = localStorage.getItem("siteLanguage") || "ru";
+setLanguage(savedLanguage);
+</script>
+</body>
+</html>
